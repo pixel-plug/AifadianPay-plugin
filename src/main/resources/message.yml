@@ -5,6 +5,7 @@ message:
     - '&f/apl ping &7验证api状态'
     - '&f/apl reload &7重载配置文件'
   only-player: '@prefix@ &c该指令仅玩家可使用'
+  reload: '@prefix@ &c已重载配置文件'
   no-perm: '@prefix@ &f缺少指定权限 &6@permission@'
   ping:
     success: '@prefix@ &fAPI状态正常!请放心使用'

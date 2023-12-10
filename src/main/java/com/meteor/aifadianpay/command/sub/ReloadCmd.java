@@ -34,8 +34,8 @@ public class ReloadCmd extends SubCmd {
 
     @Override
     public void perform(CommandSender p0, String[] p1) {
-        AifadianPay.INSTANCE.reload();
         BaseConfig.STORE.reload();
+        AfadianApi.init(plugin.getConfig().getString("user"),plugin.getConfig().getString("token"));
         p0.sendMessage(BaseConfig.STORE.getMessageBox().getMessage(null,"message.reload"));
     }
 }

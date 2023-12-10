@@ -13,6 +13,7 @@ import com.meteor.aifadianpay.httputil.HttpHeaders;
 import com.meteor.aifadianpay.httputil.callback.AsyncHttpResponseCallBack;
 import com.meteor.aifadianpay.httputil.request.HttpRequest;
 import com.meteor.aifadianpay.httputil.response.PackHttpResponse;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class AfadianApi {
@@ -29,13 +30,20 @@ public class AfadianApi {
 
     public static void init(String user_id,String token){
         afadianApi = new AfadianApi(user_id,token);
-        Status ping = afadianApi.ping();
-        if(ping==Status.N200){
-            AifadianPay.INSTANCE.getLogger().info("api状态正常!");
-        }else {
-            AifadianPay.INSTANCE.getLogger().info("api异常,错误信息"+ping.getTip()+",请检查config内api信息填写是否正确");
-            AifadianPay.INSTANCE.getLogger().info("稍后你可以输入/apl ping来重新验证");
-        }
+        Bukkit.getScheduler().runTaskLater(AifadianPay.INSTANCE,()->{
+
+            try {
+                Status ping = afadianApi.ping();
+                if(ping==Status.N200){
+                    AifadianPay.INSTANCE.getLogger().info("api状态正常!");
+                }else {
+                    AifadianPay.INSTANCE.getLogger().info("api异常,错误信息"+ping.getTip()+",请检查config内api信息填写是否正确");
+                    AifadianPay.INSTANCE.getLogger().info("稍后你可以输入/apl ping来重新验证");
+                }
+            }catch (Exception e){
+            }
+
+        },20L);
     }
 
     private AfadianApi(String user_id,String token){

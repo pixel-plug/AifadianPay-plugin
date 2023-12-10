@@ -15,6 +15,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.units.qual.C;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,8 +26,8 @@ public class MysqlStorage implements IStorage {
     private AifadianPay plugin;
     private FastMySQLStorage fastMySQLStorage;
 
-    private final String ORDER_TABLE = "AIFADIAN_ORDERS";
-    private final String SKU_DETAIL_TABLE = "AIFADIAN_SKUDETAIL";
+    private final String ORDER_TABLE = "AIFADIAN_ORDERS_0";
+    private final String SKU_DETAIL_TABLE = "AIFADIAN_SKUDETAIL_0";
 
 
     public MysqlStorage(AifadianPay plugin){
@@ -49,7 +52,8 @@ public class MysqlStorage implements IStorage {
                 Column.of("user_id",Column.Char.VARCHAR,40),
                 Column.of("plan_title",Column.Char.VARCHAR,40),
                 Column.of("redeem_id ", Column.Char.VARCHAR,40),
-                Column.of("price",Column.Char.VARCHAR,40)
+                Column.of("price",Column.Char.VARCHAR,40),
+                Column.of("insert_time",Column.Integer.BIGINT,15)
         };
 
         // 购买型号表
@@ -95,7 +99,8 @@ public class MysqlStorage implements IStorage {
                             new KeyValue("user_id",handleOrder.getUserId()),
                             new KeyValue("plan_title",handleOrder.getPlanTitle()),
                             new KeyValue("redeem_id",handleOrder.getRedeemId()),
-                            new KeyValue("price",handleOrder.getTotalAmount())
+                            new KeyValue("price",handleOrder.getTotalAmount()),
+                            new KeyValue("insert_time",System.currentTimeMillis())
                     };
                     fastMySQLStorage.put(ORDER_TABLE,tradeLog);
 
@@ -127,5 +132,26 @@ public class MysqlStorage implements IStorage {
 
         }
 
+    }
+
+    @Override
+    public int queryPlayerDonate(String p) {
+        PreparedStatement preparedStatement = null;
+        try {
+            String sql = "select sum(price) as count from "+ORDER_TABLE+" where remark = ?";
+            preparedStatement = fastMySQLStorage.getConnection().prepareStatement(sql);
+            preparedStatement.setString(1,p);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) return resultSet.getInt("sum");
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }finally {
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return 0;
     }
 }

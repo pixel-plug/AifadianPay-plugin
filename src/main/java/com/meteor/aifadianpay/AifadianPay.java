@@ -1,5 +1,6 @@
 package com.meteor.aifadianpay;
 
+import com.meteor.Metrics;
 import com.meteor.aifadianpay.afdian.AfadianApi;
 import com.meteor.aifadianpay.afdian.handle.HandlerQueryOrdersResponse;
 import com.meteor.aifadianpay.command.AifadianCommandMain;
@@ -9,6 +10,7 @@ import com.meteor.aifadianpay.listener.PlayerListener;
 import com.meteor.aifadianpay.storage.IStorage;
 import com.meteor.aifadianpay.storage.sub.MysqlStorage;
 import com.meteor.aifadianpay.util.BaseConfig;
+import com.meteor.api.hook.PlaceholderHook;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +23,7 @@ public final class AifadianPay extends JavaPlugin {
     public static AifadianPay INSTANCE;
     public QueryOrderTask queryOrderTask;
     private AifadianCommandMain commandMain;
+    private Metrics metrics;
 
     public AifadianPay(){
         INSTANCE = this;
@@ -32,9 +35,13 @@ public final class AifadianPay extends JavaPlugin {
     public void onEnable() {
         // 初始化配置文件
         BaseConfig.init(this);
-        this.initStorage();
 
-        // 初始化爱发电API
+        try {
+            this.initStorage();
+        }catch (Exception e){
+            getLogger().info("数据库信息错误!");
+        }
+
         AfadianApi.init(getConfig().getString("user"),getConfig().getString("token"));
 
         // 初始化计划任务
@@ -49,7 +56,18 @@ public final class AifadianPay extends JavaPlugin {
 
         debug = getConfig().getBoolean("debug",false);
 
+        if(getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")){
+            (new PlaceholderHook()).register();
+            getLogger().info("已兼容PlaceholderAPI");
+        }
+
         if(AifadianPay.debug) getLogger().info("已开启DEBUG模式，将在控制台输出调试信息");
+
+        metrics = new Metrics(this,19687);
+
+        getLogger().info("插件已加载,感谢使用");
+        getLogger().info("使用问题欢迎加群 653440235 反馈");
+
     }
 
     @Override
@@ -69,20 +87,6 @@ public final class AifadianPay extends JavaPlugin {
         if(getConfig().isBoolean("mysql-info.enable")) iStorage = new MysqlStorage(this);
     }
 
-    /**
-     * 重载时处理存储切换和计划任务
-     */
-    public void reload(){
-
-        try {
-            QueryOrderTask.getScheduler().clear();
-        } catch (SchedulerException e) {
-            throw new RuntimeException(e);
-        }
-
-        QueryOrderJob.init(new HandlerQueryOrdersResponse(iStorage));
-        AfadianApi.init(getConfig().getString("user"),getConfig().getString("token"));
-    }
 
     public IStorage getiStorage() {
         return iStorage;

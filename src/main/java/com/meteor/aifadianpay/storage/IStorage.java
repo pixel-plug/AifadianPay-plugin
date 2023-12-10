@@ -9,5 +9,11 @@ public interface IStorage {
      */
     void handeOrder(Order order);
 
+    /**
+     * 获取玩家捐赠总数
+     * @param p
+     * @return
+     */
+    int queryPlayerDonate(String p);
 
 }

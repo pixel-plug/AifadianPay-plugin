@@ -1,12 +1,11 @@
 
 # 填写爱发电的api
-user: '0736f39e716111ed97ca52540025c377'
-token: '5jk6Y8yE7THeWr3ctvPaVhnCRBDKFwp4'
+user: ''
+token: ''
 
 # 数据库信息 (推荐启用)
 mysql-info:
-  ip: '175.178.152.24'
-  enable: true
+  ip: '127.0.0.1'
   port: 3306
   param: 'useSsl=false'
   user: 'root'

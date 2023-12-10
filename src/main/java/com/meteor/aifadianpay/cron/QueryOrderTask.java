@@ -3,6 +3,7 @@ package com.meteor.aifadianpay.cron;
 import com.meteor.aifadianpay.AifadianPay;
 import com.meteor.aifadianpay.afdian.handle.HandlerQueryOrdersResponse;
 import com.meteor.aifadianpay.data.job.QueryOrderJob;
+import com.meteor.aifadianpay.storage.IStorage;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
@@ -34,8 +35,12 @@ public class QueryOrderTask {
 
     public QueryOrderTask(AifadianPay plugin){
         this.plugin = plugin;
-        QueryOrderJob.init(new HandlerQueryOrdersResponse(plugin.getiStorage()));
         this.loadScheduler();
+    }
+
+    public static void init(IStorage iStorage){
+        QueryOrderJob.init(new HandlerQueryOrdersResponse(iStorage));
+
     }
 
     public Set<JobKey> getJobKeys(){
