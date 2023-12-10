@@ -1,7 +1,10 @@
 
-![bs](https://bstats.org/signatures/bukkit/AifadianPay.svg)
+<div align=center><img src="https://github.com/meteorOSS/AifadianPay-plugin/assets/61687266/158d3535-0345-4ff1-b54b-4cb40db70ec0"></div>
 
 # AifadianPay
+
+![bs](https://bstats.org/signatures/bukkit/AifadianPay.svg)
+
 将爱发电支付集成到MC服务器中，你可以轻松的创建商品让玩家捐赠服务器
 
 注意: 3.0版本几乎重构，如果使用了这之前的插件版本.为了防止已处理订单污染数据库,需将shopitems.yml中的商品名更换 (不要和之前的同名)
