@@ -26,6 +26,10 @@
 
 ![pay](https://github.com/meteorOSS/AifadianPay-plugin/assets/61687266/de6dcfb1-29d9-425a-bc12-ef3c0b451c86)
 
+# 计划中的内容
+☐ 发货CDK兑换
+☐ 自动拉取爱发电商品列表，创建配置文件模板
+☐ 累积发电奖励
 
 
 
