@@ -1,3 +1,6 @@
+
+![bs](https://bstats.org/signatures/bukkit/AifadianPay.svg)
+
 # AifadianPay
 将爱发电支付集成到MC服务器中，你可以轻松的创建商品让玩家捐赠服务器
 
