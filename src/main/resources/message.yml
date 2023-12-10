@@ -1,0 +1,21 @@
+prefix: '&3&nAifadianPay '
+message:
+  help:
+    - '@prefix@'
+    - '&f/apl ping &7验证api状态'
+    - '&f/apl reload &7重载配置文件'
+  only-player: '@prefix@ &c该指令仅玩家可使用'
+  no-perm: '@prefix@ &f缺少指定权限 &6@permission@'
+  ping:
+    success: '@prefix@ &fAPI状态正常!请放心使用'
+    fail: '@prefix@ &cAPI状态异常,错误信息 &7@tip@'
+  format:
+    sku-detail: '&f &b@sku_detail@ &f*@amount@'
+  gain-reward:
+    - '@prefix@ :'
+    - '&7 订单 &f@trade_no@ &7处理 &a完成'
+    - '&7 原价 &c@price@￥ &7折扣后付款: &e&l&n@real_price@￥'
+    - '&7 购买商品数: &d@amount@'
+    - '&7购买清单:'
+    - '@format@'
+    - '&f十分感谢你的慷慨!'

@@ -1,0 +1,25 @@
+# 爱发电商品的名字
+planTitle: 点券
+# 具体的型号
+skuDetail:
+  # 型号名 (注意与爱发电应用商品信息保持一致)
+  '10点券':
+    # 展示名
+    displayName: '&f10点券'
+    # 发货触发奖励
+    rewards:
+      - 'points give @p@ 10'
+      - 'say @p@ 捐赠了10点券'
+  # 你可以添加多个，即使玩家组合购买也不会出问题
+  '100点券':
+    displayName: '&e100点券'
+    rewards:
+      - 'points give @p@ 100'
+      - 'say @p@ 捐赠了100点券'
+  '1点券':
+    # 展示名
+    displayName: '&d1点券'
+    # 发货触发奖励
+    rewards:
+      - 'points give @p@ 1'
+      - 'say @p@ 捐赠了1点券'

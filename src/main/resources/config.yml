@@ -1,0 +1,25 @@
+
+# 填写爱发电的api
+user: '0736f39e716111ed97ca52540025c377'
+token: '5jk6Y8yE7THeWr3ctvPaVhnCRBDKFwp4'
+
+# 数据库信息 (推荐启用)
+mysql-info:
+  ip: '175.178.152.24'
+  enable: true
+  port: 3306
+  param: 'useSsl=false'
+  user: 'root'
+  password: 'mmeteor233'
+  database: 'minecraft'
+  validSql: 'show databases'
+
+# 该选项控制多久开始查询一次订单
+# 默认设置为 每两分钟 进行一次查询
+# 你可以键入 0 */5 * * * * 进行五分钟一次查询
+# 更灵活的时间可以参考 http://cron.ciding.cc/
+query-cron: '0 0/2 * * * ?'
+
+# 开启debug模式 (将在后台输出错误信息)
+debug: false
+

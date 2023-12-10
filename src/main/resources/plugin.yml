@@ -1,0 +1,6 @@
+name: AifadianPay
+version: '${project.version}'
+main: com.meteor.aifadianpay.AifadianPay
+api-version: 1.18
+commands:
+  apl:
