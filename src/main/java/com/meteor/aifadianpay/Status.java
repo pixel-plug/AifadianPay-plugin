@@ -10,7 +10,8 @@ public enum Status {
     N400002(400002,"time was expired"),
     N400003(400003,"params was not valid json string"),
     N400004(400004,"no valid token found"),
-    N400005(400005,"sign validation failed");
+    N400005(400005,"sign validation failed"),
+    N400006(40006,"网络异常,请稍后再试");
 
     private int code;
     private String tip;

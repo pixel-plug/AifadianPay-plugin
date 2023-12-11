@@ -23,6 +23,15 @@ public class QueryOrderJob implements Job {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        execute(true);
+    }
+
+    /**
+     * 计划任务
+     * @param isSave 是否保存至数据库中
+     * @throws JobExecutionException
+     */
+    public void execute(boolean isSave) throws JobExecutionException {
 
         AifadianPay.INSTANCE.getLogger().info("开始处理订单");
 
@@ -33,7 +42,8 @@ public class QueryOrderJob implements Job {
             @Override
             public void success(PackHttpResponse packHttpResponse) {
                 QueryOrderResponse queryOrderResponse = AfadianApi.afadianApi.toOrders(packHttpResponse);
-                handlerQueryOrdersResponse.success(queryOrderResponse);
+
+                handlerQueryOrdersResponse.success(queryOrderResponse,isSave);
 
                 Orders orders = queryOrderResponse.getOrders();
                 if(orders!=null&&currentPage<orders.getTotalPage()){
@@ -41,7 +51,7 @@ public class QueryOrderJob implements Job {
                         AfdOrderReq next = new AfdOrderReq(i);
                         PackHttpResponse nextResponse = AfadianApi.afadianApi.queryOrders(next);
                         QueryOrderResponse nextQueryOrderResponse = AfadianApi.afadianApi.toOrders(nextResponse);
-                        handlerQueryOrdersResponse.success(nextQueryOrderResponse);
+                        handlerQueryOrdersResponse.success(nextQueryOrderResponse,isSave);
                     }
                 }
 

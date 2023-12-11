@@ -7,7 +7,7 @@ public interface IStorage {
     /**
      * 处理订单
      */
-    void handeOrder(Order order);
+    void handeOrder(Order order,boolean b);
 
     /**
      * 获取玩家捐赠总数

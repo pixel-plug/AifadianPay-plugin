@@ -6,6 +6,7 @@ import com.meteor.aifadianpay.AifadianPay;
 import com.meteor.aifadianpay.Status;
 import com.meteor.aifadianpay.afdian.request.AfadianRequest;
 import com.meteor.aifadianpay.afdian.request.AfdOrderReq;
+import com.meteor.aifadianpay.afdian.response.Order;
 import com.meteor.aifadianpay.afdian.response.Orders;
 import com.meteor.aifadianpay.afdian.response.QueryOrderResponse;
 import com.meteor.aifadianpay.httputil.Http;
@@ -13,8 +14,13 @@ import com.meteor.aifadianpay.httputil.HttpHeaders;
 import com.meteor.aifadianpay.httputil.callback.AsyncHttpResponseCallBack;
 import com.meteor.aifadianpay.httputil.request.HttpRequest;
 import com.meteor.aifadianpay.httputil.response.PackHttpResponse;
+import com.meteor.aifadianpay.util.BaseConfig;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AfadianApi {
 
@@ -30,27 +36,16 @@ public class AfadianApi {
 
     public static void init(String user_id,String token){
         afadianApi = new AfadianApi(user_id,token);
-        Bukkit.getScheduler().runTaskLater(AifadianPay.INSTANCE,()->{
-
-            try {
-                Status ping = afadianApi.ping();
-                if(ping==Status.N200){
-                    AifadianPay.INSTANCE.getLogger().info("api状态正常!");
-                }else {
-                    AifadianPay.INSTANCE.getLogger().info("api异常,错误信息"+ping.getTip()+",请检查config内api信息填写是否正确");
-                    AifadianPay.INSTANCE.getLogger().info("稍后你可以输入/apl ping来重新验证");
-                }
-            }catch (Exception e){
-            }
-
-        },20L);
     }
+
+
 
     private AfadianApi(String user_id,String token){
         this.user_id = user_id;
         this.token = token;
         this.queryOrdersRequest = Http.url("https://afdian.net/api/open/query-order")
                 .header(HttpHeaders.ACCEPT_CHARSET, "utf-8")
+                .timeOut(BaseConfig.STORE.getHttpTimeout())
                 .header(HttpHeaders.CONTENT_TYPE, "application/json");
     }
 
@@ -59,12 +54,12 @@ public class AfadianApi {
      */
     public QueryOrderResponse toOrders(PackHttpResponse packHttpResponse){
         if(AifadianPay.debug){
-            System.out.println("开始解析json");
+            AifadianPay.INSTANCE.getLogger().info("开始解析json");
         }
         String asString = packHttpResponse.getAsString("UTF-8");
         QueryOrderResponse queryOrderResponse = gson.fromJson(asString, QueryOrderResponse.class);
         if(AifadianPay.debug){
-            System.out.println("query");
+            AifadianPay.INSTANCE.getLogger().info("返回状态码: "+queryOrderResponse.getEc());
         }
         return queryOrderResponse;
     }
@@ -98,15 +93,32 @@ public class AfadianApi {
     /**
      * 测试api状态
      */
-    public Status ping(){
+    public static void ping(CommandSender commandSender){
         AfdOrderReq afdOrderReq = new AfdOrderReq(1);
         AfadianRequest afadianRequest = new AfadianRequest();
-        afadianRequest.setToken(this.token);
-        afadianRequest.setUser_id(this.user_id);
+        afadianRequest.setToken(AfadianApi.afadianApi.token);
+        afadianRequest.setUser_id(AfadianApi.afadianApi.user_id);
         afadianRequest.setParam(afdOrderReq);
-        PackHttpResponse post = queryOrdersRequest.body(gson.toJson(afadianRequest.init()))
-                .post();
-        int status = post.getStatus();
-        return Status.match(status);
+        AfadianApi.afadianApi.queryOrdersRequest.body(gson.toJson(afadianRequest.init()))
+                .asyncPost(new AsyncHttpResponseCallBack() {
+                    @Override
+                    public void success(PackHttpResponse packHttpResponse) {
+                        QueryOrderResponse queryOrderResponse = AfadianApi.afadianApi.toOrders(packHttpResponse);
+
+                        Status match = Status.match(queryOrderResponse.getEc());
+                        Map<String,String> params = new HashMap<>();
+                        params.put("@tip@",match.getTip());
+                        if(match==Status.N200){
+                            commandSender.sendMessage(BaseConfig.STORE.getMessageBox().getMessage(params,"message.ping.success"));
+                        }else {
+                            commandSender.sendMessage(BaseConfig.STORE.getMessageBox().getMessage(params,"message.ping.fail"));
+                        }
+                    }
+
+                    @Override
+                    public void fail(Exception e) {
+
+                    }
+                });
     }
 }

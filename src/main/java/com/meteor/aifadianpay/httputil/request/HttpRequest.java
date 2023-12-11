@@ -1,6 +1,7 @@
 package com.meteor.aifadianpay.httputil.request;
 
 
+import com.meteor.aifadianpay.AifadianPay;
 import com.meteor.aifadianpay.httputil.HttpHeaders;
 import com.meteor.aifadianpay.httputil.callback.AsyncHttpResponseCallBack;
 import com.meteor.aifadianpay.httputil.response.PackHttpResponse;
@@ -123,7 +124,10 @@ public class HttpRequest implements AutoCloseable{
                     try {
                         execute.close();
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        if(AifadianPay.debug){
+                            e.printStackTrace();
+                            AifadianPay.INSTANCE.getLogger().info("资源未正常关闭");
+                        }
                     }
                 }
             }
@@ -152,6 +156,7 @@ public class HttpRequest implements AutoCloseable{
             config.setConnectTimeout(timeOut);
             config.setSocketTimeout(timeOut);
             config.setConnectionRequestTimeout(timeOut);
+            httpRequestBase.setConfig(config.build());
         }
 
         // 设置请求头
@@ -161,8 +166,13 @@ public class HttpRequest implements AutoCloseable{
                 return result;
             },(r1,r2)->r2);
         }
-
-        return new PackHttpResponse(httpClient.execute(httpRequestBase));
+        try {
+            return new PackHttpResponse(httpClient.execute(httpRequestBase));
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println("error");
+        }
+        return null;
     }
 
 
@@ -176,7 +186,8 @@ public class HttpRequest implements AutoCloseable{
 
     public PackHttpResponse post(){
         try {
-            return execute(RequestMethod.POST);
+            PackHttpResponse execute = execute(RequestMethod.POST);
+            return execute;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

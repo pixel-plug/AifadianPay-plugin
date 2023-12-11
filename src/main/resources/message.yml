@@ -3,10 +3,12 @@ message:
   help:
     - '@prefix@'
     - '&f/apl ping &7验证api状态'
+    - '&f/apl debug &7开关调试状态'
     - '&f/apl reload &7重载配置文件'
   only-player: '@prefix@ &c该指令仅玩家可使用'
   reload: '@prefix@ &c已重载配置文件'
   no-perm: '@prefix@ &f缺少指定权限 &6@permission@'
+  debug: '@prefix@ &f调试模式为 &e@mode@'
   ping:
     success: '@prefix@ &fAPI状态正常!请放心使用'
     fail: '@prefix@ &cAPI状态异常,错误信息 &7@tip@'

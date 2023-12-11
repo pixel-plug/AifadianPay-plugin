@@ -11,6 +11,7 @@ import com.meteor.aifadianpay.storage.IStorage;
 import com.meteor.aifadianpay.storage.sub.MysqlStorage;
 import com.meteor.aifadianpay.util.BaseConfig;
 import com.meteor.api.hook.PlaceholderHook;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,7 +44,7 @@ public final class AifadianPay extends JavaPlugin {
         }
 
         AfadianApi.init(getConfig().getString("user"),getConfig().getString("token"));
-
+        AfadianApi.ping(Bukkit.getConsoleSender());
         // 初始化计划任务
         queryOrderTask = new QueryOrderTask(this);
 
@@ -85,6 +86,7 @@ public final class AifadianPay extends JavaPlugin {
      */
     private void initStorage(){
         if(getConfig().isBoolean("mysql-info.enable")) iStorage = new MysqlStorage(this);
+        QueryOrderTask.init(iStorage);
     }
 
 

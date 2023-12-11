@@ -16,11 +16,17 @@ public class HandlerQueryOrdersResponse{
         this.iStorage = iStorage;
     }
 
-    public void success(QueryOrderResponse queryOrderResponse) {
+    public void success(QueryOrderResponse queryOrderResponse,boolean isSave) {
         Orders orders = queryOrderResponse.getOrders();
+
+
         if(orders!=null){
-            AifadianPay.INSTANCE.getLogger().info("正在处理第"+orders.getTotalPage()+"/"+orders.getTotalCount()+"页");
-            orders.getOrderList().forEach(order -> iStorage.handeOrder(order));
+            if(AifadianPay.debug) {
+                AifadianPay.INSTANCE.getLogger().info("本页订单数 " + orders.getOrderList().size());
+            }
+            orders.getOrderList().forEach(order -> {
+                iStorage.handeOrder(order,isSave);
+            });
         }
     }
 

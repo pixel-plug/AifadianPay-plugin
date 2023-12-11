@@ -99,6 +99,10 @@ public class BaseConfig {
 
     }
 
+    public int getHttpTimeout(){
+        return plugin.getConfig().getInt("timeout",8)*1000;
+    }
+
 
     public MessageBox getMessageBox() {
         return messageBox;

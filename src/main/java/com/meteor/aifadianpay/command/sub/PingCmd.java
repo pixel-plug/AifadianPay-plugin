@@ -11,6 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PingCmd extends SubCmd {
+
+
+    private long lastPingTime;
+
+    /**
+     * 是否操作过于频繁
+     * @return
+     */
+    private boolean isPass(){
+        return ((System.currentTimeMillis()-lastPingTime)/1000)>=3;
+    }
+
     public PingCmd(JavaPlugin plugin) {
         super(plugin);
     }
@@ -37,13 +49,11 @@ public class PingCmd extends SubCmd {
 
     @Override
     public void perform(CommandSender p0, String[] p1) {
-        Status ping = AfadianApi.afadianApi.ping();
-        if(ping==Status.N200){
-            p0.sendMessage(BaseConfig.STORE.getMessageBox().getMessage(null,"message.ping.success"));
+        if(isPass()){
+            lastPingTime = System.currentTimeMillis();
+            AfadianApi.ping(p0);
         }else {
-            Map<String,String> params = new HashMap<>();
-            params.put("@tip@",ping.getTip());
-            p0.sendMessage(BaseConfig.STORE.getMessageBox().getMessage(params,"message.ping.fail"));
+            p0.sendMessage("操作过于频繁");
         }
     }
 }

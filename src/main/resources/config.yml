@@ -22,3 +22,5 @@ query-cron: '0 0/2 * * * ?'
 # 开启debug模式 (将在后台输出错误信息)
 debug: false
 
+# 网络请求超时时间 (秒)
+timeout: 10

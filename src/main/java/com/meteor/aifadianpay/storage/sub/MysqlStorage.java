@@ -80,14 +80,14 @@ public class MysqlStorage implements IStorage {
      * @param order
      */
     @Override
-    public void handeOrder(Order order) {
+    public void handeOrder(Order order,boolean isSave) {
         // 过滤订单
         List<Order> orders = FilterManager.meet(Arrays.asList(order));
         if(!orders.isEmpty()){
             Order handleOrder = orders.get(0);
             Player playerExact = Bukkit.getPlayerExact(handleOrder.getRemark());
 
-            if(playerExact!=null){
+            if(playerExact!=null&&isSave){
                 if(!isExistOrder(handleOrder.getOutTradeNo())){
 
                     /***
@@ -121,7 +121,6 @@ public class MysqlStorage implements IStorage {
                     /**
                      * 发货
                      */
-                    AifadianPay.INSTANCE.getLogger().info("发货!");
                     ShopItem shopItem = BaseConfig.STORE.getShopItemMap().get(handleOrder.getPlanTitle());
                     Bukkit.getScheduler().runTask(plugin,()->{
                         SendOutGoodsEvent sendOutGoodsEvent = new SendOutGoodsEvent(playerExact,shopItem,handleOrder.getOutTradeNo(),handleOrder.getSkuDetail(),handleOrder);
