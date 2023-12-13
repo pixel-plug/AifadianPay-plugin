@@ -100,7 +100,7 @@ public class BaseConfig {
     }
 
     public int getHttpTimeout(){
-        return plugin.getConfig().getInt("timeout",8)*1000;
+        return plugin.getConfig().getInt("timeout",30)*1000;
     }
 
 

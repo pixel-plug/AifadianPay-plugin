@@ -61,8 +61,10 @@ public class AfadianApi {
         if(AifadianPay.debug){
             AifadianPay.INSTANCE.getLogger().info("返回状态码: "+queryOrderResponse.getEc());
         }
+        packHttpResponse.close();
         return queryOrderResponse;
     }
+
 
     /**
      * 异步请求订单

@@ -4,8 +4,6 @@ import com.meteor.aifadianpay.AifadianPay;
 import com.meteor.aifadianpay.afdian.AfadianApi;
 import com.meteor.aifadianpay.afdian.response.Orders;
 import com.meteor.aifadianpay.afdian.response.QueryOrderResponse;
-import com.meteor.aifadianpay.httputil.callback.AsyncHttpResponseCallBack;
-import com.meteor.aifadianpay.httputil.response.PackHttpResponse;
 import com.meteor.aifadianpay.storage.IStorage;
 
 public class HandlerQueryOrdersResponse{

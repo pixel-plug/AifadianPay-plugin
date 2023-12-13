@@ -32,8 +32,12 @@ public class PackHttpResponse implements AutoCloseable{
         关闭实体输入流
      */
     @Override
-    public void close() throws Exception {
-        httpResponse.getEntity().getContent().close();
+    public void close() {
+        try {
+            httpResponse.getEntity().getContent().close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
