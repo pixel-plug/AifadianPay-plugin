@@ -4,6 +4,8 @@ import com.meteor.aifadianpay.afdian.response.Order;
 
 public interface IStorage {
 
+
+
     /**
      * 处理订单
      */

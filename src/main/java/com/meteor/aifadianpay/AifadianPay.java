@@ -9,6 +9,7 @@ import com.meteor.aifadianpay.data.job.QueryOrderJob;
 import com.meteor.aifadianpay.listener.PlayerListener;
 import com.meteor.aifadianpay.storage.IStorage;
 import com.meteor.aifadianpay.storage.sub.MysqlStorage;
+import com.meteor.aifadianpay.storage.sub.SqliteStorage;
 import com.meteor.aifadianpay.util.BaseConfig;
 import com.meteor.api.hook.PlaceholderHook;
 import org.bukkit.Bukkit;
@@ -85,7 +86,9 @@ public final class AifadianPay extends JavaPlugin {
      * 初始化存储
      */
     private void initStorage(){
-        if(getConfig().isBoolean("mysql-info.enable")) iStorage = new MysqlStorage(this);
+        if(getConfig().getBoolean("mysql-info.enable",false))
+            this.iStorage = new MysqlStorage(this);
+        else this.iStorage = new SqliteStorage(this);
         QueryOrderTask.init(iStorage);
     }
 

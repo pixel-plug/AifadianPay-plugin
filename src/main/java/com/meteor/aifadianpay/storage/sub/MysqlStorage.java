@@ -31,6 +31,17 @@ public class MysqlStorage implements IStorage {
 
 
     public MysqlStorage(AifadianPay plugin){
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+                plugin.getLogger().info("无法加载数据库驱动,请反馈给开发者");
+                return;
+            }
+        }
         this.plugin = plugin;
         this.fastMySQLStorage = new FastMySQLStorage(plugin,plugin.getConfig().getConfigurationSection("mysql-info"));
         this.connect();
@@ -128,7 +139,6 @@ public class MysqlStorage implements IStorage {
                     });
                 }
             }
-
         }
 
     }
@@ -137,7 +147,7 @@ public class MysqlStorage implements IStorage {
     public int queryPlayerDonate(String p) {
         PreparedStatement preparedStatement = null;
         try {
-            String sql = "select sum(price) as count from "+ORDER_TABLE+" where remark = ?";
+            String sql = "select sum(cast(`price` as DECIMAL(10,2))) as count from "+ORDER_TABLE+" where remark = ?";
             preparedStatement = fastMySQLStorage.getConnection().prepareStatement(sql);
             preparedStatement.setString(1,p);
             ResultSet resultSet = preparedStatement.executeQuery();

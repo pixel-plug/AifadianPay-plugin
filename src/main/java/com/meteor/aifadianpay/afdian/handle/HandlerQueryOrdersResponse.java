@@ -22,9 +22,14 @@ public class HandlerQueryOrdersResponse{
 
         if(orders!=null){
             if(AifadianPay.debug) {
+                boolean test = iStorage==null;
+                AifadianPay.INSTANCE.getLogger().info("storage "+test);
                 AifadianPay.INSTANCE.getLogger().info("本页订单数 " + orders.getOrderList().size());
             }
             orders.getOrderList().forEach(order -> {
+                if(AifadianPay.debug){
+                    AifadianPay.INSTANCE.getLogger().info("handler"+order.getOutTradeNo());
+                }
                 iStorage.handeOrder(order,isSave);
             });
         }

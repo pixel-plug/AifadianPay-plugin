@@ -6,6 +6,7 @@ token: ''
 # 数据库信息 (推荐启用)
 mysql-info:
   ip: '127.0.0.1'
+  enable: false
   port: 3306
   param: 'useSsl=false'
   user: 'root'

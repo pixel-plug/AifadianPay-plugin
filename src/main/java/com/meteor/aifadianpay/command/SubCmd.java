@@ -1,12 +1,15 @@
 package com.meteor.aifadianpay.command;
 
 import com.google.common.collect.ImmutableMap;
+import com.meteor.aifadianpay.util.BaseConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class SubCmd {
     protected JavaPlugin plugin;
@@ -32,12 +35,13 @@ public abstract class SubCmd {
     public abstract void perform(final CommandSender p0, final String[] p1);
     public void execute(CommandSender sender, String[] args){
         if(this.playersOnly()&&!(sender instanceof Player)){
-//            sender.sendMessage(Store.state.getMessageBox().getMessage(null,"message.playerOnly"));
+            sender.sendMessage(BaseConfig.STORE.getMessageBox().getMessage(null,"message.only-player"));
             return;
         }
         if (!hasPerm(sender)) {
-//            sender.sendMessage(Store.state.getMessageBox().getMessage(ImmutableMap.<String,String>builder().put("@perm@",getPermission()).build(),
-//                    "message.no-perm"));
+            Map<String,String> prams = new HashMap<>();
+            prams.put("@permission@",getPermission());
+            sender.sendMessage(BaseConfig.STORE.getMessageBox().getMessage(prams,"message.no-perm"));
             return;
         }
         this.perform(sender,args);
