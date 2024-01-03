@@ -4,10 +4,31 @@ message:
     - '@prefix@'
     - '&f/apl ping &7验证api状态'
     - '&f/apl debug &7开关调试状态'
+    - '&f/apl info [订单编号] &7查询订单处理状态'
+    - '&f/apl so [订单编号] &7手动收货(发货)'
     - '&f/apl reload &7重载配置文件'
   only-player: '@prefix@ &c该指令仅玩家可使用'
   reload: '@prefix@ &c已重载配置文件'
   no-perm: '@prefix@ &f缺少指定权限 &6@permission@'
+
+  send-out:
+    remark-error: '@prefix@ &7订单未留言玩家id或你不是该订单的主人'
+    success: '@prefix@ &7已处理订单'
+    fail: '@prefix@ &c订单处理失败,你可以开启debug模式后再次处理订单查询失败的原因...'
+    not-online: '@prefix@ &7订单主人离线或不存在...'
+    repeat: '@prefix@ &7该订单已经处理过了，请不要重复处理'
+
+  order-info:
+    notExistOrder: '@prefix@ &7该订单不存在'
+    state:
+      - ''
+      - '&7订单编号 &3@trade_no@'
+      - '&7订单是否已处理 @state@'
+      - '&7订单留言(发货玩家) &a@remark@'
+      - ''
+      - '&7购买商品 &6&l@plan@'
+      - '&7花费 &6&n@price@￥'
+
   debug: '@prefix@ &f调试模式为 &e@mode@'
   ping:
     success: '@prefix@ &fAPI状态正常!请放心使用'

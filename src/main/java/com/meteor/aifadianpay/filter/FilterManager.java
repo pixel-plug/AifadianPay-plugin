@@ -26,8 +26,6 @@ public class FilterManager {
      * @return
      */
     public static List<Order> meet(List<Order> orders){
-
-
         for (OrderFilter filter : filters) {
             orders = filter.meet(orders);
         }

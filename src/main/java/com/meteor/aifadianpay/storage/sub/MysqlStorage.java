@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.checkerframework.checker.units.qual.C;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,6 +46,13 @@ public class MysqlStorage implements IStorage {
         this.plugin = plugin;
         this.fastMySQLStorage = new FastMySQLStorage(plugin,plugin.getConfig().getConfigurationSection("mysql-info"));
         this.connect();
+        // 启用事务
+        try {
+            this.getConnection().setAutoCommit(false);
+            plugin.getLogger().info("已禁用数据库自动提交");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void connect(){
@@ -91,56 +99,79 @@ public class MysqlStorage implements IStorage {
      * @param order
      */
     @Override
-    public void handeOrder(Order order,boolean isSave) {
+    public boolean handeOrder(Order order,boolean isSave) {
         // 过滤订单
         List<Order> orders = FilterManager.meet(Arrays.asList(order));
         if(!orders.isEmpty()){
             Order handleOrder = orders.get(0);
             Player playerExact = Bukkit.getPlayerExact(handleOrder.getRemark());
 
+            Connection connection = getConnection();
+
             if(playerExact!=null&&isSave){
-                if(!isExistOrder(handleOrder.getOutTradeNo())){
 
-                    /***
-                     * 插入已处理订单表
-                     */
-                    KeyValue[] tradeLog = {
-                            new KeyValue("out_trade_no",handleOrder.getOutTradeNo()),
-                            new KeyValue("remark",handleOrder.getRemark()),
-                            new KeyValue("user_id",handleOrder.getUserId()),
-                            new KeyValue("plan_title",handleOrder.getPlanTitle()),
-                            new KeyValue("redeem_id",handleOrder.getRedeemId()),
-                            new KeyValue("price",handleOrder.getTotalAmount()),
-                            new KeyValue("insert_time",System.currentTimeMillis())
-                    };
-                    fastMySQLStorage.put(ORDER_TABLE,tradeLog);
+                try {
+                    if(!isExistOrder(handleOrder.getOutTradeNo())){
 
-                    /***
-                     * 型号处理
-                     */
-                    for (SkuDetail skuDetail : handleOrder.getSkuDetail()) {
-                        KeyValue[] skuDetailLog = {
+                        /***
+                         * 插入已处理订单表
+                         */
+                        KeyValue[] tradeLog = {
                                 new KeyValue("out_trade_no",handleOrder.getOutTradeNo()),
-                                new KeyValue("sku_id",skuDetail.getSkuId()),
-                                new KeyValue("price",skuDetail.getPic()),
-                                new KeyValue("name",skuDetail.getName()),
-                                new KeyValue("count",skuDetail.getCount())
+                                new KeyValue("remark",handleOrder.getRemark()),
+                                new KeyValue("user_id",handleOrder.getUserId()),
+                                new KeyValue("plan_title",handleOrder.getPlanTitle()),
+                                new KeyValue("redeem_id",handleOrder.getRedeemId()),
+                                new KeyValue("price",handleOrder.getTotalAmount()),
+                                new KeyValue("insert_time",System.currentTimeMillis())
                         };
-                        fastMySQLStorage.put(SKU_DETAIL_TABLE,skuDetailLog);
-                    }
+                        fastMySQLStorage.put(ORDER_TABLE,tradeLog);
 
-                    /**
-                     * 发货
-                     */
-                    ShopItem shopItem = BaseConfig.STORE.getShopItemMap().get(handleOrder.getPlanTitle());
-                    Bukkit.getScheduler().runTask(plugin,()->{
-                        SendOutGoodsEvent sendOutGoodsEvent = new SendOutGoodsEvent(playerExact,shopItem,handleOrder.getOutTradeNo(),handleOrder.getSkuDetail(),handleOrder);
-                        Bukkit.getServer().getPluginManager().callEvent(sendOutGoodsEvent);
-                    });
+                        /***
+                         * 型号处理
+                         */
+                        for (SkuDetail skuDetail : handleOrder.getSkuDetail()) {
+                            KeyValue[] skuDetailLog = {
+                                    new KeyValue("out_trade_no",handleOrder.getOutTradeNo()),
+                                    new KeyValue("sku_id",skuDetail.getSkuId()),
+                                    new KeyValue("price",skuDetail.getPic()),
+                                    new KeyValue("name",skuDetail.getName()),
+                                    new KeyValue("count",skuDetail.getCount())
+                            };
+                            fastMySQLStorage.put(SKU_DETAIL_TABLE,skuDetailLog);
+                        }
+
+                        // 提交事务
+                        connection.commit();
+
+                        /**
+                         * 发货
+                         */
+                        ShopItem shopItem = BaseConfig.STORE.getShopItemMap().get(handleOrder.getPlanTitle());
+                        Bukkit.getScheduler().runTask(plugin,()->{
+                            SendOutGoodsEvent sendOutGoodsEvent = new SendOutGoodsEvent(playerExact,shopItem,handleOrder.getOutTradeNo(),handleOrder.getSkuDetail(),handleOrder);
+                            Bukkit.getServer().getPluginManager().callEvent(sendOutGoodsEvent);
+                        });
+                        return true;
+                    }
+                }catch (SQLException sqlException){
+                    try {
+                        connection.rollback();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         }
+        return false;
+    }
 
+    private Connection getConnection(){
+        try {
+            return fastMySQLStorage.getConnection();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -162,5 +193,10 @@ public class MysqlStorage implements IStorage {
             }
         }
         return 0;
+    }
+
+    @Override
+    public boolean isHandleOrder(String tradeNo) {
+        return isExistOrder(tradeNo);
     }
 }

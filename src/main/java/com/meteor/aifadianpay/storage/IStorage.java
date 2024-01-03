@@ -9,7 +9,7 @@ public interface IStorage {
     /**
      * 处理订单
      */
-    void handeOrder(Order order,boolean b);
+    boolean handeOrder(Order order,boolean b);
 
     /**
      * 获取玩家捐赠总数
@@ -17,5 +17,7 @@ public interface IStorage {
      * @return
      */
     int queryPlayerDonate(String p);
+
+    boolean isHandleOrder(String tradeNo);
 
 }

@@ -57,6 +57,11 @@ public class SqliteStorage implements IStorage {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
@@ -71,6 +76,7 @@ public class SqliteStorage implements IStorage {
         resultSet = null;
         try {
             preparedStatement = this.connection.prepareStatement("select * from " + ORDER_TABLE + " where out_trade_no = ?");
+            preparedStatement.setString(1,no);
             resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) return true;
         } catch (SQLException e) {
@@ -123,41 +129,51 @@ public class SqliteStorage implements IStorage {
     }
 
     @Override
-    public void handeOrder(Order order, boolean b) {
+    public boolean handeOrder(Order order, boolean b) {
         List<Order> orders = FilterManager.meet(Arrays.asList(order));
         if(!orders.isEmpty()){
             Order handleOrder = orders.get(0);
             Player playerExact = Bukkit.getPlayerExact(handleOrder.getRemark());
 
             if(playerExact!=null&&b){
+                try {
+                    if(!isExistOrder(handleOrder.getOutTradeNo())){
+                        /***
+                         * 插入已处理订单表
+                         */
+                        this.insertOrder(handleOrder);
+                        /***
+                         * 型号处理
+                         */
+                        for (SkuDetail skuDetail : handleOrder.getSkuDetail()) {
+                            this.insertSkudetail(handleOrder,skuDetail);
+                        }
+                        /**
+                         * 发货
+                         */
+                        ShopItem shopItem = BaseConfig.STORE.getShopItemMap().get(handleOrder.getPlanTitle());
+                        Bukkit.getScheduler().runTask(plugin,()->{
+                            SendOutGoodsEvent sendOutGoodsEvent = new SendOutGoodsEvent(playerExact,shopItem,handleOrder.getOutTradeNo(),handleOrder.getSkuDetail(),handleOrder);
+                            Bukkit.getServer().getPluginManager().callEvent(sendOutGoodsEvent);
+                        });
+                        connection.commit();
+                        return true;
+                    }
+                }catch (SQLException sqlException){
 
-
-                if(!isExistOrder(handleOrder.getOutTradeNo())){
-
-                    /***
-                     * 插入已处理订单表
-                     */
-                    this.insertOrder(handleOrder);
-
-
-                    /***
-                     * 型号处理
-                     */
-                    for (SkuDetail skuDetail : handleOrder.getSkuDetail()) {
-                        this.insertSkudetail(handleOrder,skuDetail);
+                    try {
+                        connection.rollback();
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
                     }
 
-                    /**
-                     * 发货
-                     */
-                    ShopItem shopItem = BaseConfig.STORE.getShopItemMap().get(handleOrder.getPlanTitle());
-                    Bukkit.getScheduler().runTask(plugin,()->{
-                        SendOutGoodsEvent sendOutGoodsEvent = new SendOutGoodsEvent(playerExact,shopItem,handleOrder.getOutTradeNo(),handleOrder.getSkuDetail(),handleOrder);
-                        Bukkit.getServer().getPluginManager().callEvent(sendOutGoodsEvent);
-                    });
                 }
+
+
             }
         }
+
+        return false;
     }
 
     @Override
@@ -181,5 +197,10 @@ public class SqliteStorage implements IStorage {
             }
         }
         return 0;
+    }
+
+    @Override
+    public boolean isHandleOrder(String tradeNo) {
+        return isExistOrder(tradeNo);
     }
 }

@@ -3,7 +3,7 @@ package com.meteor.aifadianpay.afdian.request;
 import com.google.gson.annotations.SerializedName;
 
 public class AfdOrderReq {
-    @SerializedName("page")
+
     private Integer page;
     @SerializedName("out_trade_no")
     private String out_trade_no;
@@ -12,9 +12,17 @@ public class AfdOrderReq {
         this.page = page;
     }
 
-    public AfdOrderReq(Integer page, String out_trade_no) {
-        this.page = page;
+    public AfdOrderReq(String out_trade_no) {
         this.out_trade_no = out_trade_no;
+    }
+
+    /**
+     * 当为0时防止被序列化以查询特定编号订单
+     * @return
+     */
+    @SerializedName("page")
+    public Integer getPage(){
+        return page==0?null:page;
     }
 
     public void setPage(Integer page) {
@@ -25,9 +33,6 @@ public class AfdOrderReq {
         this.out_trade_no = out_trade_no;
     }
 
-    public Integer getPage() {
-        return page;
-    }
 
     public String getOut_trade_no() {
         return out_trade_no;

@@ -16,5 +16,7 @@ public class AifadianCommandMain extends AbstractCommandManager{
         register(new HelpCmd(AifadianPay.INSTANCE));
         register(new PingCmd(AifadianPay.INSTANCE));
         register(new DebugCmd(AifadianPay.INSTANCE));
+        register(new InfoCmd(AifadianPay.INSTANCE));
+        register(new SendOutCmd(AifadianPay.INSTANCE));
     }
 }

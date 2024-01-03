@@ -119,7 +119,7 @@ public class AfadianApi {
 
                     @Override
                     public void fail(Exception e) {
-
+                        e.printStackTrace();
                     }
                 });
     }
