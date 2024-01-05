@@ -57,7 +57,7 @@ public class Order {
     private String addressAddress;
 
 
-    
+
     // Getters and Setters
     
     public String getOutTradeNo() {
@@ -203,6 +203,7 @@ public class Order {
     public void setAddressAddress(String addressAddress) {
         this.addressAddress = addressAddress;
     }
+
 
     @Override
     public String toString() {

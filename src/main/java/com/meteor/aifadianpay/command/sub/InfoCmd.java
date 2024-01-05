@@ -39,7 +39,7 @@ public class InfoCmd extends SubCmd {
 
     @Override
     public String usage() {
-        return null;
+        return "查询订单状态";
     }
 
     @Override

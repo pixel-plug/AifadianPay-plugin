@@ -43,7 +43,7 @@ public class SendOutCmd extends SubCmd {
 
     @Override
     public String usage() {
-        return null;
+        return "发货/收货";
     }
 
     @Override

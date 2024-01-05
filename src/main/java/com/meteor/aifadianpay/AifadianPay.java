@@ -7,6 +7,7 @@ import com.meteor.aifadianpay.command.AifadianCommandMain;
 import com.meteor.aifadianpay.cron.QueryOrderTask;
 import com.meteor.aifadianpay.data.job.QueryOrderJob;
 import com.meteor.aifadianpay.listener.PlayerListener;
+import com.meteor.aifadianpay.storage.AbstractStorage;
 import com.meteor.aifadianpay.storage.IStorage;
 import com.meteor.aifadianpay.storage.sub.MysqlStorage;
 import com.meteor.aifadianpay.storage.sub.SqliteStorage;
@@ -31,7 +32,7 @@ public final class AifadianPay extends JavaPlugin {
         INSTANCE = this;
     }
 
-    private IStorage iStorage;
+    private AbstractStorage iStorage;
 
     @Override
     public void onEnable() {
@@ -93,7 +94,7 @@ public final class AifadianPay extends JavaPlugin {
     }
 
 
-    public IStorage getiStorage() {
+    public AbstractStorage getiStorage() {
         return iStorage;
     }
 }

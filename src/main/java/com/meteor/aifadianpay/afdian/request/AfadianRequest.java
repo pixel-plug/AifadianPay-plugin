@@ -1,11 +1,9 @@
 package com.meteor.aifadianpay.afdian.request;
 
 
-import com.google.gson.JsonObject;
-import com.google.gson.annotations.SerializedName;
+
 import com.meteor.aifadianpay.afdian.AfadianApi;
 
-import javax.rmi.ssl.SslRMIClientSocketFactory;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

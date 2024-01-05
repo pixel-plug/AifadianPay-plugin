@@ -6,22 +6,17 @@ import com.meteor.aifadianpay.afdian.response.SkuDetail;
 import com.meteor.aifadianpay.api.event.SendOutGoodsEvent;
 import com.meteor.aifadianpay.data.ShopItem;
 import com.meteor.aifadianpay.filter.FilterManager;
-import com.meteor.aifadianpay.mysql.data.KeyValue;
-import com.meteor.aifadianpay.storage.IStorage;
+import com.meteor.aifadianpay.storage.AbstractStorage;
+import com.meteor.aifadianpay.storage.export.ExportOrder;
+import com.meteor.aifadianpay.storage.export.ExportSkuDetail;
 import com.meteor.aifadianpay.util.BaseConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class SqliteStorage implements IStorage {
-
-
-    private final String ORDER_TABLE = "AIFADIAN_ORDERS_0";
-    private final String SKU_DETAIL_TABLE = "AIFADIAN_SKUDETAIL_0";
-
+public class SqliteStorage extends AbstractStorage {
     private AifadianPay plugin;
     private Connection connection;
 
@@ -95,7 +90,8 @@ public class SqliteStorage implements IStorage {
 
     public void insertOrder(Order order) {
 
-        String sql = "INSERT INTO AIFADIAN_ORDERS_0 (out_trade_no, remark, user_id, plan_title, redeem_id,price,insert_time) VALUES (?, ?, ?, ?,?,?,?)";
+        String sql = "INSERT INTO @table@ (out_trade_no, remark, user_id, plan_title, redeem_id,price,insert_time) VALUES (?, ?, ?, ?,?,?,?)"
+                .replace("@table@",ORDER_TABLE);
 
         try (
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -114,7 +110,8 @@ public class SqliteStorage implements IStorage {
 
     public void insertSkudetail(Order order,SkuDetail skuDetail) {
 
-        String sql = "INSERT INTO AIFADIAN_SKUDETAIL_0 (out_trade_no, sku_id, price, `name`, `count`) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO @table@ (out_trade_no, sku_id, price, `name`, `count`) VALUES (?, ?, ?, ?, ?)"
+                .replace("@table@",SKU_DETAIL_TABLE);
 
         try (
                 PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -203,4 +200,67 @@ public class SqliteStorage implements IStorage {
     public boolean isHandleOrder(String tradeNo) {
         return isExistOrder(tradeNo);
     }
+
+
+    public void insertData(String tableName, Map<String, Object> data) {
+        StringJoiner columns = new StringJoiner(", ", "(", ")");
+        StringJoiner params = new StringJoiner(", ", "(", ")");
+        for (String column : data.keySet()) {
+            columns.add("`" + column + "`");
+            params.add("?");
+        }
+        String sql = "INSERT INTO " + tableName + " " + columns.toString() + " VALUES " + params.toString();
+
+        try (
+             PreparedStatement statement = getConnection().prepareStatement(sql)) {
+
+            int index = 1;
+            for (Object value : data.values()) {
+                statement.setObject(index++, value);
+            }
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void importData(List<ExportOrder> exportOrders, List<ExportSkuDetail> skuDetails) {
+        Map<String,Object> objectMap = new HashMap<>();
+        for (ExportOrder exportOrder : exportOrders) {
+            Order order = exportOrder.getOrder();
+            objectMap.put("out_trade_no",order.getOutTradeNo());
+            objectMap.put("remark",order.getRemark());
+            objectMap.put("user_id",order.getUserId());
+            objectMap.put("plan_title",order.getPlanTitle());
+            objectMap.put("redeem_id",order.getRedeemId());
+            objectMap.put("price",order.getTotalAmount());
+            objectMap.put("insert_time",exportOrder.getInsertTime());
+            insertData(ORDER_TABLE,objectMap);
+        }
+
+        objectMap.clear();
+
+        for (ExportSkuDetail skuDetail : skuDetails) {
+            objectMap.put("out_trade_no",skuDetail.getOut_trade_no());
+            objectMap.put("sku_id",skuDetail.getSku_id());
+            objectMap.put("price",skuDetail.getPrice());
+            objectMap.put("name",skuDetail.getName());
+            objectMap.put("count",skuDetail.getCount());
+            insertData(SKU_DETAIL_TABLE,objectMap);
+        }
+    }
+
+    @Override
+    public AifadianPay getPlugin() {
+        return plugin;
+    }
+
+    @Override
+    public Connection getConnection() {
+        return connection;
+    }
+
 }

@@ -9,11 +9,13 @@ import com.meteor.aifadianpay.filter.FilterManager;
 import com.meteor.aifadianpay.mysql.FastMySQLStorage;
 import com.meteor.aifadianpay.mysql.column.Column;
 import com.meteor.aifadianpay.mysql.data.KeyValue;
-import com.meteor.aifadianpay.storage.IStorage;
+import com.meteor.aifadianpay.storage.AbstractStorage;
+import com.meteor.aifadianpay.storage.export.ExportOrder;
+import com.meteor.aifadianpay.storage.export.ExportSkuDetail;
 import com.meteor.aifadianpay.util.BaseConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.C;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,13 +24,10 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-public class MysqlStorage implements IStorage {
+public class MysqlStorage extends AbstractStorage {
 
     private AifadianPay plugin;
     private FastMySQLStorage fastMySQLStorage;
-
-    private final String ORDER_TABLE = "AIFADIAN_ORDERS_0";
-    private final String SKU_DETAIL_TABLE = "AIFADIAN_SKUDETAIL_0";
 
 
     public MysqlStorage(AifadianPay plugin){
@@ -54,6 +53,10 @@ public class MysqlStorage implements IStorage {
             throw new RuntimeException(e);
         }
     }
+
+
+
+
 
     private void connect(){
         this.fastMySQLStorage.enable();
@@ -166,7 +169,7 @@ public class MysqlStorage implements IStorage {
         return false;
     }
 
-    private Connection getConnection(){
+    public Connection getConnection(){
         try {
             return fastMySQLStorage.getConnection();
         } catch (Throwable e) {
@@ -198,5 +201,39 @@ public class MysqlStorage implements IStorage {
     @Override
     public boolean isHandleOrder(String tradeNo) {
         return isExistOrder(tradeNo);
+    }
+
+    @Override
+    public void importData(List<ExportOrder> exportOrders, List<ExportSkuDetail> skuDetails) {
+        for (ExportOrder exportOrder : exportOrders) {
+            Order order = exportOrder.getOrder();
+            KeyValue[] keyValues = {
+                    new KeyValue("out_trade_no",order.getOutTradeNo()),
+                    new KeyValue("remark",order.getRemark()),
+                    new KeyValue("user_id",order.getUserId()),
+                    new KeyValue("plan_title",order.getPlanTitle()),
+                    new KeyValue("redeem_id",order.getRedeemId()),
+                    new KeyValue("price",order.getTotalAmount()),
+                    new KeyValue("insert_time",exportOrder.getInsertTime())
+            };
+            fastMySQLStorage.put(ORDER_TABLE,keyValues);
+        }
+
+        for (ExportSkuDetail skuDetail : skuDetails) {
+            KeyValue[] keyValues = {
+                    new KeyValue("out_trade_no",skuDetail.getOut_trade_no()),
+                    new KeyValue("sku_id",skuDetail.getSku_id()),
+                    new KeyValue("price",skuDetail.getPrice()),
+                    new KeyValue("name",skuDetail.getName()),
+                    new KeyValue("count",skuDetail.getCount())
+            };
+            fastMySQLStorage.put(SKU_DETAIL_TABLE,keyValues);
+        }
+
+    }
+
+    @Override
+    public AifadianPay getPlugin() {
+        return plugin;
     }
 }

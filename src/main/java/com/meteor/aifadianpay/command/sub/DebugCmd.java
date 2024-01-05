@@ -33,7 +33,7 @@ public class DebugCmd extends SubCmd {
 
     @Override
     public String usage() {
-        return "调试";
+        return "开始调试模式";
     }
 
     @Override
