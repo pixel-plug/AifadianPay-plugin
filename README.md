@@ -3,6 +3,9 @@
 
 # 关于
 
+![289392801-158d3535-0345-4ff1-b54b-4cb40db70ec0](https://github.com/meteorOSS/AifadianPay-plugin/assets/61687266/6df27167-1413-4c07-88ab-73722c96fc94)
+
+
 ![bs](https://bstats.org/signatures/bukkit/AifadianPay.svg)
 
 将爱发电支付集成到MC服务器中，你可以轻松的创建商品让玩家捐赠服务器
