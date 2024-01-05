@@ -3,8 +3,7 @@
 
 # 关于
 
-![289392801-158d3535-0345-4ff1-b54b-4cb40db70ec0](https://github.com/meteorOSS/AifadianPay-plugin/assets/61687266/6df27167-1413-4c07-88ab-73722c96fc94)
-
+![0_bYxABYbP](https://github.com/meteorOSS/AifadianPay-plugin/assets/61687266/5cd13918-ee9c-491a-807f-e15503f6ee1f)
 
 ![bs](https://bstats.org/signatures/bukkit/AifadianPay.svg)
 
