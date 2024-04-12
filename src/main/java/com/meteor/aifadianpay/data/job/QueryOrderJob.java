@@ -42,9 +42,7 @@ public class QueryOrderJob implements Job {
             @Override
             public void success(PackHttpResponse packHttpResponse) {
                 QueryOrderResponse queryOrderResponse = AfadianApi.afadianApi.toOrders(packHttpResponse);
-
                 handlerQueryOrdersResponse.success(queryOrderResponse,isSave);
-
                 Orders orders = queryOrderResponse.getOrders();
                 if(orders!=null&&currentPage<orders.getTotalPage()){
                     for(int i = currentPage+1;i<=orders.getTotalPage();i++){
@@ -54,7 +52,6 @@ public class QueryOrderJob implements Job {
                         handlerQueryOrdersResponse.success(nextQueryOrderResponse,isSave);
                     }
                 }
-
             }
 
             @Override
