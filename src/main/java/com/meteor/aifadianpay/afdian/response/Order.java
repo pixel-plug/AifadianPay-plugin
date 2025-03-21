@@ -7,7 +7,7 @@ import java.util.List;
 public class Order {
 
 
-    public static final String ORDER_URL = "https://afdian.net/api/open/query-order";
+    public static final String ORDER_URL = "https://afdian.com/api/open/query-order";
 
     @SerializedName("out_trade_no")
     private String outTradeNo;

@@ -37,13 +37,11 @@ public class AfadianApi {
     public static void init(String user_id,String token){
         afadianApi = new AfadianApi(user_id,token);
     }
-
-
-
+    
     private AfadianApi(String user_id,String token){
         this.user_id = user_id;
         this.token = token;
-        this.queryOrdersRequest = Http.url("https://afdian.net/api/open/query-order")
+        this.queryOrdersRequest = Http.url("https://afdian.com/api/open/query-order")
                 .header(HttpHeaders.ACCEPT_CHARSET, "utf-8")
                 .timeOut(BaseConfig.STORE.getHttpTimeout())
                 .header(HttpHeaders.CONTENT_TYPE, "application/json");

@@ -12,7 +12,7 @@ import com.meteor.aifadianpay.httputil.response.PackHttpResponse;
  */
 public class TestPack {
     public static void main(String[] args) {
-        Http.url("https://afdian.net/api/creator/get-plan-skus?plan_id=6da20b76aa1011eeb63f5254001e7c00&is_ext=")
+        Http.url("https://afdian.com/api/creator/get-plan-skus?plan_id=6da20b76aa1011eeb63f5254001e7c00&is_ext=")
                 .timeOut(3000)
                 .header(HttpHeaders.ACCEPT, "application/json")
                 .asyncGet(new AsyncHttpResponseCallBack() {

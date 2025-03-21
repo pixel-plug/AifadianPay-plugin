@@ -26,7 +26,7 @@ public class TestHttp {
         afadianRequest.init();
 
 
-        Http.url("https://afdian.net/api/open/query-order").
+        Http.url("https://afdian.com/api/open/query-order").
                 header(HttpHeaders.ACCEPT_CHARSET, "utf-8")
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 .body((new Gson()).toJson(afadianRequest))

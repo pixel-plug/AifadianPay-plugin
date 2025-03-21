@@ -9,7 +9,7 @@
 
 将爱发电支付集成到MC服务器中，你可以轻松的创建商品让玩家捐赠服务器
 
-在开始之前，请先注册一个 [爱发电](https://afdian.net) 账号
+在开始之前，请先注册一个 [爱发电](https://afdian.com) 账号
 
 # 使用协议
 
@@ -33,7 +33,7 @@
 
 如果你认可我的工作，可以请我喝一杯可乐 
 
-这是我的爱发电地址: [https://afdian.net/a/zshzsh](https://afdian.net/a/zshzsh)
+这是我的爱发电地址: [https://afdian.com/a/zshzsh](https://afdian.com/a/zshzsh)
 
 或者[直接扫收款码](https://github.com/meteorOSS/AifadianPay-plugin/blob/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20231211001511.jpg)
 
